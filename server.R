@@ -9,7 +9,12 @@ shinyServer(function(input, output) {
   rows_index <- data.frame()
   selected_index <- -1
 
-  output$table <- DT::renderDataTable({
+#  output$pheno <- DT::renderDataTable({
+#    l <- p[,names(p) %in% c("tag", "name", "population", "consortium", "sample_size")]
+#    DT::datatable(l,selection = 'single',escape = FALSE)
+#  })
+
+  output$results <- DT::renderDataTable({
     data <- get_results_data_from_db(input)
     if ( length(data) ){
         rows_index <<- data[,"phenotype"]
@@ -22,10 +27,11 @@ shinyServer(function(input, output) {
     selection = 'single')
   })
 
-  proxy <- DT::dataTableProxy('table')
+# Used for debugging, mostly
+#  proxy <- DT::dataTableProxy('results')
 
-  modal_process <- eventReactive(input$table_rows_selected, {
-    s = input$table_rows_selected
+  modal_process <- eventReactive(input$results_rows_selected, {
+    s = input$results_rows_selected
     info <- NULL
     if (length(s) && length(rows_index)) {
       selected_row = as.numeric(tail(s, 1))
@@ -37,12 +43,8 @@ shinyServer(function(input, output) {
 
   output$phenoInformation <- renderUIPhenoInformation(modal_process)
 
-#  output$phenoInformation <- renderUI({
-#    modal_process()
-#  })
-
   observeEvent(
-    input$table_rows_selected,{
+    input$results_rows_selected,{
     shinyjs::runjs("$('#myModal').modal()")
   })
 
