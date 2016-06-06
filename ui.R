@@ -46,8 +46,6 @@ build_ui <- function(){
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
     ),
-    p("'Tissue' stands for different transcriptome models used when generating the association."),
-    p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
     h3("Results:"),
     selectInput(
       "display", "What to show:",
@@ -74,6 +72,8 @@ build_ui <- function(){
         DT::dataTableOutput(outputId="pheno")
       )
     ),
+    p("'Tissue' stands for different transcriptome models used when generating the association."),
+    p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
     disclaimer(),
     cites()
   )

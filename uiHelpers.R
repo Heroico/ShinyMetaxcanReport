@@ -20,7 +20,7 @@ cites <- function() {
     h <- h3('References:')
     p1 <-p('Gamazon ER, Wheeler HE, Shah KP, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, Nicolae DL, Cox NJ, Im HK. (2015)',
             strong(' A gene-based association method for mapping traits using reference transcriptome data. Nat Genet. doi:10.1038/ng.3367.'),
-            a(href='http://www.nature.com/ng/journal/v47/n9/full/ng.3367.html', "Link to Nature"),
+            a(href='http://www.nature.com/ng/journal/v47/n9/full/ng.3367.html', "Link to Nature Genetics"),
             a(href='http://biorxiv.org/content/early/2015/06/17/020164', "Link to Preprint"))
 
     p2 <- p( 'Alvaro Barbeira, Kaanan P Shah, Jason M Torres, Heather E Wheeler, Eric S Torstenson, Todd Edwards, Tzintzuni Garcia, Graeme I Bell, Dan Nicolae, Nancy J Cox, Hae Kyung Im. (2016)',
