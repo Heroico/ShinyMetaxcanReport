@@ -163,3 +163,13 @@ get_results_data_from_db <- function(input) {
 
     data
 }
+
+post_process_results <- function(data) {
+    data$effect_size <- round(data$effect_size,2)
+    data$zscore <- round(data$zscore,2)
+    data$pval <- signif(data$pval,2)
+    data$pred_perf_r2 <- round(data$pred_perf_r2,2)
+    data$pred_perf_pval <- signif(data$pred_perf_pval,2)
+    data$pred_perf_qval <- signif(data$pred_perf_qval,2)
+    data
+}

@@ -1,8 +1,12 @@
 source("helpers.R")
+source("uiHelpers.R")
 
 #reset Shiny Server when data gets updated
 sgt <- c("All", t$tag)
 sgp <- c("All", p$tag)
+
+
+
 
 # Not used at the moment, but might come back
 build_ui_d <- function(){
@@ -14,7 +18,7 @@ build_ui_d <- function(){
       content = uiOutput("phenoInformation")
     ),
     p("'Tissue' stands for different transcriptome models used when generating the association."),
-    p("Tissues built with GTEX data, covariances with 1000 Genomes."),
+    p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
     fluidRow(
       column(2, textInput("gene_name", "Gene Name:","")),
       column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
@@ -43,7 +47,8 @@ build_ui <- function(){
       content = uiOutput("phenoInformation")
     ),
     p("'Tissue' stands for different transcriptome models used when generating the association."),
-    p("Tissues built with GTEX data, covariances with 1000 Genomes."),
+    p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
+    h3("Results:"),
     selectInput(
       "display", "What to show:",
       c(Results = 'results',
@@ -68,7 +73,9 @@ build_ui <- function(){
       fluidRow(
         DT::dataTableOutput(outputId="pheno")
       )
-    )
+    ),
+    disclaimer(),
+    cites()
   )
   f
 }

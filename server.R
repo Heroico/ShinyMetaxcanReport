@@ -33,6 +33,7 @@ shinyServer(function(input, output) {
 
   output$results <- DT::renderDataTable({
     data <- get_results_data_from_db(input)
+    data <- post_process_results(data)
     if ( length(data) ){
         results_index <<- data[,"phenotype"]
     }
