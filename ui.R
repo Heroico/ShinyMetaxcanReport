@@ -41,6 +41,7 @@ build_ui_d <- function(){
 build_ui <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
+    tags$head(includeScript("google-analytics.js")),
     titlePanel("Metaxcan Association results"),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
