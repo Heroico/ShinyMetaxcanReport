@@ -64,6 +64,12 @@ build_ui <- function(){
         column(1, numericInput("limit", "Record limit:", 100))
       ),
       fluidRow(
+        column(2),
+        column(1),
+        column(2, textInput("pheno_pattern", "Patterns:", "")),
+        column(2, textInput("tissue_pattern", "Patterns:", ""))
+      ),
+      fluidRow(
         DT::dataTableOutput(outputId="results")
       )#,
     ),

@@ -97,6 +97,37 @@ update_ui_cook <- function() {
     dbDisconnect(db)
 }
 
+build_id_matches <- function(df, pattern) {
+    keys <- strsplit(pattern, ' ')[[1]]
+    id_matches <- integer()
+    for (k in keys) {
+      matches <- df[grep(k, df$tag),]
+      id_matches <- c( id_matches, matches$id)
+    }
+    as.character(unique(id_matches))
+}
+
+build_id_matches_in_clause <- function(pattern, id_matches, and_clause) {
+    clause <- ""
+    if (length(id_matches) > 0) {
+      clause <- paste0(
+                  and_clause,
+                  paste0(id_matches, collapse = ', '),
+                  ") ")
+    }
+    clause
+}
+
+where_pheno_pattern_query <- function(pattern) {
+    id_matches <- build_id_matches(p, pattern)
+    build_id_matches_in_clause(pattern, id_matches, " AND p.id in (")
+}
+
+where_tissue_pattern_query <- function(pattern) {
+    id_matches <- build_id_matches(t, pattern)
+    build_id_matches_in_clause(pattern, id_matches, " AND t.id in (")
+}
+
 get_results_data_from_db <- function(input) {
     # Construct the fetching query
     where <- " WHERE m.pval IS NOT null and p.hidden != true"
@@ -105,6 +136,14 @@ get_results_data_from_db <- function(input) {
       kk <- strsplit(gsub("[^[:alnum:] ]", "", input$gene_name), " +")[[1]]
       kk <- paste(kk, collapse = '')
       where <- paste0(where, " AND g.gene_name LIKE '", kk, "%'")
+    }
+
+    if (nchar(input$pheno_pattern) >0) {
+      where <- paste0(where, where_pheno_pattern_query(input$pheno_pattern))
+    }
+
+    if (nchar(input$tissue_pattern) >0) {
+      where <- paste0(where, where_tissue_pattern_query(input$tissue_pattern))
     }
 
     if (input$pheno != "All") {
