@@ -97,21 +97,33 @@ update_ui_cook <- function() {
     dbDisconnect(db)
 }
 
+naive_string_sanitation <- function( text ) {
+  sanitized <- strsplit(gsub("[^[:alnum:] ]", "", text), " +")[[1]]
+  sanitized <- paste(sanitized, collapse = '')
+  sanitized
+}
+
 build_id_matches <- function(df, pattern) {
     keys <- strsplit(pattern, ' ')[[1]]
     id_matches <- integer()
+    l <- tolower(df$tag)
     for (k in keys) {
-      matches <- df[grep(k, df$tag),]
+      if (nchar(k)==0) {
+        next;
+      }
+      matches <- df[grep(tolower(k), l), ]
       id_matches <- c( id_matches, matches$id)
     }
     as.character(unique(id_matches))
 }
 
-build_id_matches_in_clause <- function(pattern, id_matches, and_clause) {
+build_id_matches_in_clause <- function(pattern, id_matches, id_clause) {
     clause <- ""
     if (length(id_matches) > 0) {
       clause <- paste0(
-                  and_clause,
+                  " AND ",
+                  id_clause,
+                  " in (",
                   paste0(id_matches, collapse = ', '),
                   ") ")
     }
@@ -120,12 +132,12 @@ build_id_matches_in_clause <- function(pattern, id_matches, and_clause) {
 
 where_pheno_pattern_query <- function(pattern) {
     id_matches <- build_id_matches(p, pattern)
-    build_id_matches_in_clause(pattern, id_matches, " AND p.id in (")
+    build_id_matches_in_clause(pattern, id_matches, "p.id")
 }
 
 where_tissue_pattern_query <- function(pattern) {
     id_matches <- build_id_matches(t, pattern)
-    build_id_matches_in_clause(pattern, id_matches, " AND t.id in (")
+    build_id_matches_in_clause(pattern, id_matches, "t.id")
 }
 
 get_results_data_from_db <- function(input) {
@@ -133,9 +145,8 @@ get_results_data_from_db <- function(input) {
     where <- " WHERE m.pval IS NOT null and p.hidden != true"
 
     if (nchar(input$gene_name) > 0){
-      kk <- strsplit(gsub("[^[:alnum:] ]", "", input$gene_name), " +")[[1]]
-      kk <- paste(kk, collapse = '')
-      where <- paste0(where, " AND g.gene_name LIKE '", kk, "%'")
+      s <- naive_string_sanitation(input$gene_name)
+      where <- paste0(where, " AND g.gene_name LIKE '", s, "%'")
     }
 
     if (nchar(input$pheno_pattern) >0) {
