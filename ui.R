@@ -19,6 +19,7 @@ build_ui_d <- function(){
     ),
     p("'Tissue' stands for different transcriptome models used when generating the association."),
     p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
+    p("Data Release: August 19, 2016"),
     fluidRow(
       column(2, textInput("gene_name", "Gene Name:","")),
       column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
@@ -81,6 +82,7 @@ build_ui <- function(){
     ),
     p("'Tissue' stands for different transcriptome models used when generating the association."),
     p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
+    p("Data Release: August 19, 2016"),
     disclaimer(),
     cites()
   )
