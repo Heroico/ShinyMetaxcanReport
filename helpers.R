@@ -165,17 +165,15 @@ get_results_data_from_db <- function(input) {
       where <- paste0(where, " AND m.tissue_id = ", t[t$tag==input$tissue,]$id, "")
     }
 
-    t = 0.05
     if (is.numeric(input$threshold) && input$threshold > 0) {
       t = input$threshold
+      where <- paste0(where, " AND pval < ", t)
     }
-    where <- paste0(where, " AND pval < ", t)
 
-    r2_threshold = 0.01
     if (is.numeric(input$r2_threshold) && input$r2_threshold > 0) {
         r2_threshold = input$r2_threshold
+        where <- paste0(where, " AND pred_perf_R2 > ", r2_threshold)
     }
-    where <- paste0(where, " AND pred_perf_R2 > ", r2_threshold)
 
     query <- paste0(
     "SELECT ",
