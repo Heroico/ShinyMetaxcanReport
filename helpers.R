@@ -98,7 +98,7 @@ update_ui_cook <- function() {
 }
 
 naive_string_sanitation <- function( text ) {
-  sanitized <- strsplit(gsub("[^[:alnum:] ]", "", text), " +")[[1]]
+  sanitized <- strsplit(gsub("[^(-[:alnum:]) ]", "", text), " +")[[1]]
   sanitized <- paste(sanitized, collapse = '')
   sanitized
 }
