@@ -13,13 +13,14 @@ build_ui_d <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
     titlePanel("Metaxcan Association results"),
+    p("Data Release: September 7, 2016"),
+    p("Tissues and covariances built on V6P HapMap"),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
     ),
     p("'Tissue' stands for different transcriptome models used when generating the association."),
     p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
-    p("Data Release: August 19, 2016"),
     fluidRow(
       column(2, textInput("gene_name", "Gene Name:","")),
       column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
@@ -44,6 +45,8 @@ build_ui <- function(){
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
     titlePanel("Metaxcan Association results"),
+    p("Data Release: September 7, 2016."),
+    p("Tissues and covariances built on V6P HapMap."),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
