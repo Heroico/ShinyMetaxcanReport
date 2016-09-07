@@ -46,7 +46,7 @@ build_ui <- function(){
     tags$head(includeScript("google-analytics.js")),
     titlePanel("Metaxcan Association results"),
     p("Data Release: September 7, 2016."),
-    p("Tissues and covariances built on V6P HapMap."),
+    p("Prediction models and covariances built with GTEx V6P and DGN on HapMap SNPs."),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
@@ -84,8 +84,6 @@ build_ui <- function(){
       )
     ),
     p("'Tissue' stands for different transcriptome models used when generating the association."),
-    p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
-    p("Data Release: August 19, 2016"),
     disclaimer(),
     cites()
   )
