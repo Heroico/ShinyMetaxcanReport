@@ -5,9 +5,6 @@ source("uiHelpers.R")
 sgt <- c("All", t$tag)
 sgp <- c("All", p$tag)
 
-
-
-
 # Not used at the moment, but might come back
 build_ui_d <- function(){
   f <- fluidPage(
@@ -68,7 +65,7 @@ build_ui <- function(){
         column(1, numericInput("limit", "Record limit:", 100))
       ),
       fluidRow(
-        column(2),
+        column(2, p("(Admits lowercase gene names except for 'C*orf*' genes which need precise case)")),
         column(1),
         column(2, textInput("pheno_pattern", "Patterns:", "")),
         column(2, textInput("tissue_pattern", "Patterns:", ""))

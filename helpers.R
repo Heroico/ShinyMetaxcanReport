@@ -2,7 +2,7 @@ library(RPostgreSQL)
 
 get_db <- function() {
     #Modify the following line to point to a different data set, if you want. Or just replace the db file with an appropriate one.
-    db_data <- readRDS("db_v6phm.data")
+    db_data <- readRDS("db_v6phm_1_2.data")
     drv <- dbDriver("PostgreSQL")
     db <- dbConnect(drv, host=db_data$host,
                         port=db_data$port,
@@ -146,6 +146,7 @@ get_results_data_from_db <- function(input) {
 
     if (nchar(input$gene_name) > 0){
       s <- naive_string_sanitation(input$gene_name)
+      s <- get_gene_name_field_conversion(s)
       where <- paste0(where, " AND g.gene_name LIKE '", s, "%'")
     }
 
@@ -222,4 +223,31 @@ post_process_results <- function(data) {
         data$pred_perf_qval <- signif(data$pred_perf_qval,2)
     }
     data
+}
+
+get_gene_key <- function(path) {
+  entries <- read.csv(path, header=FALSE, stringsAsFactors=FALSE)$V1
+  l <- as.list(entries)
+  names(l) <- tolower(entries)
+  return(l)
+}
+
+get_pass_through <- function(path) {
+  entries <- read.csv(path, header=FALSE, stringsAsFactors=FALSE)$V1
+  entries <- tolower(entries)
+  return(entries)
+}
+
+gene_key <- get_gene_key("gene_keys.txt")
+
+get_gene_name_field_conversion <- function(k) {
+    c_k <- paste0("^",tolower(k))
+    if (nchar(k)>2 && sum(grepl(c_k, names(gene_key))) > 0) {
+    # Problem is, there exist "C6ORF165" and genes like "C6orf1", which would have a similar lower cased' root
+#        ind <- grep(c_k, names(gene_key))[1]
+#        gk <- gene_key[[ names(gene_key)[ind] ]]
+#        gk <- substr(gk,1, length(k))
+        return(k)
+    }
+    return(toupper(k))
 }
