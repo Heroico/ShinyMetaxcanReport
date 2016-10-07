@@ -56,6 +56,7 @@ build_ui <- function(){
     conditionalPanel(
       condition = "input.display == 'results'",
       fluidRow(
+        column(2, textInput("id", "Identifier:","")),
         column(2, textInput("gene_name", "Gene Name:","")),
         column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
         column(2, selectInput("pheno", "Phenotype:", sgp)),
@@ -65,6 +66,7 @@ build_ui <- function(){
         column(1, numericInput("limit", "Record limit:", 100))
       ),
       fluidRow(
+        column(2),
         column(2, p("(Admits lowercase gene names except for 'C*orf*' genes which need precise case)")),
         column(1),
         column(2, textInput("pheno_pattern", "Patterns:", "")),
