@@ -7,4 +7,5 @@ rsconnect
 /data/results
 
 db*.data
+*pyc
 

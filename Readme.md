@@ -4,9 +4,9 @@ This shiny app connects to a postgre database with metaxcan results and displays
 
 ## Database 
 
-At the moment, this is expecting a Postgre database.
+This app expects a **PostgreSQL** database to be up and running with a proper results layout.
 
-Expected schema is:
+At the time of this writing, the Expected schema is:
 
 ```SQL
 CREATE TABLE gene
@@ -87,14 +87,38 @@ Prerequisites are **shiny**, **shinyjs**, **RPostgreSQL**, **DT**. Try to instal
 the CRAN packages were mostly outdated at the time of this writing.
 Then, you can run `shiny::runApp()` at an R console started at the project folder.
 
+### Database Backend Connection
+
+The Shiny App takes connection information from an RDS file called something like `db.data`. This file is not maintained in the versioning system for security reasons.
+
+When creating a Shiny App aiming at a particular database, the following must be done:
+
+1) Modify `helpers.R` near the top to read like:
+```R
+db_data <- readRDS("my_db_connection.data")
+```
+2) Have the expected file contain the appropriate information. You can build it in `R` by performing the following steps:
+```R
+k <- list(host="myhost.com",
+port="5432",
+dbname="my_db",
+user="my_user",
+password="my_password")
+saveRDS(k, "my_db_connection.data")
+```
+
+
 ## deploy
 
-You need to have `rsconnect`R Package installed. You need to configure your acount info by running:
+You need to have `rsconnect`R Package installed. You need to configure your acount info by running in an R console:
 
 ```R
 rsconnect::setAccountInfo(name='myaccount', token='MY_TOKEN', secret='MY_SECRET')
 ```
 
-Then, from an R console started at the project, run `deployApp(appName="My App or Whatever")`.
-Shiny's package logic is somewhat obscure. I specifically chose `US TX` R mirror for this to work.
+Then, from an R console started at the project, run: 
+```R
+deployApp(appName="My App or Whatever")
+```
+Shiny's package logic is somewhat obscure. I sometimes got packrat errors when choosing mirrors. I specifically chose `US TX` R mirror for this to work.
 
