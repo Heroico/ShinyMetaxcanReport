@@ -10,7 +10,7 @@ build_ui_d <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
     titlePanel("Metaxcan Association results"),
-    p("Data Release: September 7, 2016"),
+    p("Data Release: November 18, 2016"),
     p("Tissues and covariances built on V6P HapMap"),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
@@ -42,8 +42,9 @@ build_ui <- function(){
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
     titlePanel("Metaxcan Association results"),
-    p("Data Release: September 7, 2016."),
-    p("Prediction models and covariances built with GTEx V6P and DGN on HapMap SNPs."),
+    p("Data Release: November 18, 2016."),
+    p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
+    p("DGN Prediction Model built with Depression Genes and Networks study data."),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
