@@ -171,10 +171,10 @@ get_results_data_from_db <- function(input) {
       where <- paste0(where, " AND pval < ", t)
     }
 
-#    if (is.numeric(input$r2_threshold) && input$r2_threshold > 0) {
-#        r2_threshold = input$r2_threshold
-#        where <- paste0(where, " AND pred_perf_R2 > ", r2_threshold)
-#    }
+    if (is.numeric(input$r2_threshold) && input$r2_threshold > 0 && input$r2_threshold <= 1) {
+        r2_threshold = input$r2_threshold
+        where <- paste0(where, " AND pred_perf_R2 > ", r2_threshold)
+    }
 
     query <- paste0(
     "SELECT ",
