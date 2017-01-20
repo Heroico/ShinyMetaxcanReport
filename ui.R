@@ -42,7 +42,7 @@ build_ui <- function(){
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
     titlePanel("Metaxcan Association results"),
-    p("Data Release: November 18, 2016."),
+    p("Data Release: August 29, 2016."),
     p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
     p("DGN Prediction Model built with Depression Genes and Networks study data."),
     htmlTemplate("modal.html",
