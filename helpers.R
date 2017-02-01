@@ -2,7 +2,7 @@ library(RPostgreSQL)
 
 get_db <- function() {
     #Modify the following line to point to a different data set, if you want. Or just replace the db file with an appropriate one.
-    db_data <- readRDS("db_v6phm_1_3.data")
+    db_data <- readRDS("db_smr_0.0.data")
     drv <- dbDriver("PostgreSQL")
     db <- dbConnect(drv, host=db_data$host,
                         port=db_data$port,
@@ -171,10 +171,10 @@ get_results_data_from_db <- function(input) {
       where <- paste0(where, " AND pval < ", t)
     }
 
-    if (is.numeric(input$r2_threshold) && input$r2_threshold > 0 && input$r2_threshold <= 1) {
-        r2_threshold = input$r2_threshold
-        where <- paste0(where, " AND pred_perf_R2 > ", r2_threshold)
-    }
+#    if (is.numeric(input$r2_threshold) && input$r2_threshold > 0 && input$r2_threshold <= 1) {
+#        r2_threshold = input$r2_threshold
+#        where <- paste0(where, " AND pred_perf_R2 > ", r2_threshold)
+#    }
 
     query <- paste0(
     "SELECT ",

@@ -9,9 +9,9 @@ sgp <- c("All", p$tag)
 build_ui_d <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
-    titlePanel("Metaxcan Association results"),
-    p("Data Release: November 18, 2016"),
-    p("Tissues and covariances built on V6P HapMap"),
+    titlePanel("SMR Association results"),
+    p("Data Release: February 1, 2017"),
+    p("Tissues arre GTEX v6p eqtls"),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
@@ -41,10 +41,9 @@ build_ui <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
-    titlePanel("Metaxcan Association results"),
-    p("Data Release: November 18, 2016."),
-    p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
-    p("DGN Prediction Model built with Depression Genes and Networks study data."),
+    titlePanel("SMR Association results"),
+    p("Data Release: February 1, 2017."),
+    p("V6P eQTLs used"),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
