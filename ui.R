@@ -41,8 +41,8 @@ build_ui <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
-    titlePanel("Metaxcan Association results"),
-    p("Data Release: November 18, 2016."),
+    titlePanel("Metaxcan Association results, T2d paper"),
+    p("Data Release: February 7, 2017."),
     p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
     p("DGN Prediction Model built with Depression Genes and Networks study data."),
     htmlTemplate("modal.html",
@@ -61,7 +61,7 @@ build_ui <- function(){
         column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
         column(2, selectInput("pheno", "Phenotype:", sgp)),
         column(2, selectInput("tissue", "Tissue:", sgt)),
-        column(1, numericInput("r2_threshold", "R2 threshold:",0.01)),
+        #column(1, numericInput("r2_threshold", "R2 threshold:",0.01)),
         column(1, numericInput("threshold", "Pvalue threshold:",0.05)),
         column(1, numericInput("limit", "Record limit:", 100))
       ),
