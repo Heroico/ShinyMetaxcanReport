@@ -2,7 +2,7 @@ library(RPostgreSQL)
 
 get_db <- function() {
     #Modify the following line to point to a different data set, if you want. Or just replace the db file with an appropriate one.
-    db_data <- readRDS("db_v6phm_1_3.data")
+    db_data <- readRDS("db_prototype.data")
     drv <- dbDriver("PostgreSQL")
     db <- dbConnect(drv, host=db_data$host,
                         port=db_data$port,
@@ -188,11 +188,15 @@ get_results_data_from_db <- function(input) {
     " m.pred_perf_pval,",
     " m.pred_perf_qval,",
     " m.n as n_snps_used,",
-    " m.model_n as n_snps_in_model",
+    " m.model_n as n_snps_in_model, ",
+    " mi.p_smr, ",
+    " mi.p_heidi, ",
+    " mi.coloc_p4 ",
     " FROM gene AS g ",
     " INNER JOIN metaxcan_result AS m ON g.id = m.gene_id ",
     " INNER JOIN tissue AS t ON t.id = m.tissue_id ",
     " INNER JOIN pheno AS p ON p.id = m.pheno_id ",
+    " LEFT JOIN metaxcan_result_info as mi on m.id = mi.metaxcan_result_id ",
     where);
 
     if (input$ordered){
@@ -214,14 +218,15 @@ get_results_data_from_db <- function(input) {
 }
 
 post_process_results <- function(data) {
-    if(length(data$effect_size) > 0) {
-        data$effect_size <- round(data$effect_size,2)
-        data$zscore <- round(data$zscore,2)
-        data$pval <- signif(data$pval,2)
-        data$pred_perf_r2 <- round(data$pred_perf_r2,2)
-        data$pred_perf_pval <- signif(data$pred_perf_pval,2)
-        data$pred_perf_qval <- signif(data$pred_perf_qval,2)
-    }
+#   Not sure
+#    if(length(data$effect_size) > 0) {
+#        data$effect_size <- round(data$effect_size,2)
+#        data$zscore <- round(data$zscore,2)
+#        data$pval <- signif(data$pval,2)
+#        data$pred_perf_r2 <- round(data$pred_perf_r2,2)
+#        data$pred_perf_pval <- signif(data$pred_perf_pval,2)
+#        data$pred_perf_qval <- signif(data$pred_perf_qval,2)
+#    }
     data
 }
 

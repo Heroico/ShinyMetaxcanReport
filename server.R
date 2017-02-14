@@ -1,3 +1,4 @@
+library(magrittr)
 source("helpers.R", local=TRUE)
 source("phenoInfoModule.R", local=TRUE)
 
@@ -9,6 +10,27 @@ selection_event <- function(selected, index) {
       info <- pheno_info_with_tag(p, selected_pheno_key)
     }
     info
+}
+
+render_results <- function(data) {
+  render <- DT::datatable(data,
+  class = 'compact display',
+  options = list(
+      pageLength = 20,
+      lengthMenu = c(10, 20, 40, 100)
+  ),
+  selection = 'single')
+# multiple pipes didnt work across several line s:/
+  render <- render %>% DT::formatRound('zscore',2)
+  render <- render  %>% DT::formatRound('effect_size',2)
+  render <- render  %>% DT::formatSignif('pval',2)
+  render <- render  %>% DT::formatSignif('pred_perf_r2',2)
+  render <- render  %>% DT::formatSignif('pred_perf_pval',2)
+  render <- render  %>% DT::formatSignif('pred_perf_qval',2)
+  render <- render  %>% DT::formatSignif('p_smr',2)
+  render <- render  %>% DT::formatSignif('p_heidi',2)
+  render <- render  %>% DT::formatSignif('coloc_p4',2)
+  render
 }
 
 # Define a server for the Shiny app
@@ -34,15 +56,11 @@ shinyServer(function(input, output) {
   output$results <- DT::renderDataTable({
     data <- get_results_data_from_db(input)
     data <- post_process_results(data)
+
     if ( length(data) ){
         results_index <<- data[,"phenotype"]
     }
-    DT::datatable(data,
-    options = list(
-      pageLength = 20,
-      lengthMenu = c(10, 20, 40, 100)
-    ),
-    selection = 'single')
+    render_results(data)
   })
 
 # Used for debugging, mostly
