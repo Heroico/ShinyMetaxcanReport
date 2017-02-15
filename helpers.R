@@ -191,7 +191,7 @@ get_results_data_from_db <- function(input) {
     " m.model_n as n_snps_in_model, ",
     " mi.p_smr, ",
     " mi.p_heidi, ",
-    " mi.coloc_p4 ",
+    " mi.coloc_p4 as coloc_prob",
     " FROM gene AS g ",
     " INNER JOIN metaxcan_result AS m ON g.id = m.gene_id ",
     " INNER JOIN tissue AS t ON t.id = m.tissue_id ",

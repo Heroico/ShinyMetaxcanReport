@@ -29,7 +29,7 @@ render_results <- function(data) {
   render <- render  %>% DT::formatSignif('pred_perf_qval',2)
   render <- render  %>% DT::formatSignif('p_smr',2)
   render <- render  %>% DT::formatSignif('p_heidi',2)
-  render <- render  %>% DT::formatSignif('coloc_p4',2)
+  render <- render  %>% DT::formatSignif('coloc_prob',2)
   render
 }
 
