@@ -64,13 +64,16 @@ build_ui <- function(){
         column(2, selectInput("tissue", "Tissue:", sgt)),
         column(1, numericInput("r2_threshold", "R2 threshold:",0.01)),
         column(1, numericInput("threshold", "Pvalue threshold:",0.05)),
-        column(1, numericInput("limit", "Record limit:", 100))
+        column(1, numericInput("limit", "Record limit:", 100)),
+        column(1, checkboxInput("smr_f", label = "Only with SMR"))
       ),
       fluidRow(
         column(2, p("(Admits lowercase gene names except for 'C*orf*' genes which need precise case)")),
         column(1),
         column(2, textInput("pheno_pattern", "Patterns:", "")),
-        column(2, textInput("tissue_pattern", "Patterns:", ""))
+        column(2, textInput("tissue_pattern", "Patterns:", "")),
+        column(3),
+        column(1, checkboxInput("twas_f", label = "Only with TWAS"))
       ),
       fluidRow(
         DT::dataTableOutput(outputId="results")

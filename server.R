@@ -21,15 +21,18 @@ render_results <- function(data) {
   ),
   selection = 'single')
 # multiple pipes didnt work across several line s:/
-  render <- render %>% DT::formatRound('zscore',2)
-  render <- render  %>% DT::formatRound('effect_size',2)
-  render <- render  %>% DT::formatSignif('pval',2)
-  render <- render  %>% DT::formatSignif('pred_perf_r2',2)
-  render <- render  %>% DT::formatSignif('pred_perf_pval',2)
-  render <- render  %>% DT::formatSignif('pred_perf_qval',2)
-  render <- render  %>% DT::formatSignif('p_smr',2)
-  render <- render  %>% DT::formatSignif('p_heidi',2)
-  render <- render  %>% DT::formatSignif('coloc_prob',2)
+  if (nrow(data)>0) {
+    render <- render %>%
+      DT::formatRound('zscore',2) %>%
+      DT::formatRound('effect_size',2) %>%
+      DT::formatSignif('pval',2) %>%
+      DT::formatSignif('pred_perf_r2',2) %>%
+      DT::formatSignif('pred_perf_pval',2) %>%
+      DT::formatSignif('pred_perf_qval',2) %>%
+      DT::formatSignif('p_smr',2) %>%
+      DT::formatSignif('p_heidi',2) %>%
+      DT::formatSignif('coloc_prob',2)
+  }
   render
 }
 

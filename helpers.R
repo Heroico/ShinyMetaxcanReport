@@ -176,6 +176,14 @@ get_results_data_from_db <- function(input) {
         where <- paste0(where, " AND pred_perf_R2 > ", r2_threshold)
     }
 
+    if(input$twas_f) {
+        where <- paste0(where, " AND tr.p > 0")
+    }
+
+    if(input$smr_f) {
+        where <- paste0(where, " AND mi.p_smr > 0")
+    }
+
     query <- paste0(
     "SELECT ",
     "g.gene_name,",
@@ -191,12 +199,15 @@ get_results_data_from_db <- function(input) {
     " m.model_n as n_snps_in_model, ",
     " mi.p_smr, ",
     " mi.p_heidi, ",
-    " mi.coloc_p4 as coloc_prob",
+    " mi.coloc_p4 as coloc_prob, ",
+    " tr.p as p_twas ",
     " FROM gene AS g ",
     " INNER JOIN metaxcan_result AS m ON g.id = m.gene_id ",
     " INNER JOIN tissue AS t ON t.id = m.tissue_id ",
     " INNER JOIN pheno AS p ON p.id = m.pheno_id ",
     " LEFT JOIN metaxcan_result_info as mi on m.id = mi.metaxcan_result_id ",
+    " LEFT JOIN twas_relationship as trr ON m.id = trr.metaxcan_result_id ",
+    " LEFT JOIN twas_result as tr ON trr.twas_result_id = tr.id ",
     where);
 
     if (input$ordered){
