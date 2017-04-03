@@ -31,7 +31,8 @@ render_results <- function(data) {
       DT::formatSignif('pred_perf_qval',2) %>%
       DT::formatSignif('p_smr',2) %>%
       DT::formatSignif('p_heidi',2) %>%
-      DT::formatSignif('coloc_prob',2)
+      DT::formatSignif('coloc_prob4',2) %>%
+      DT::formatSignif('coloc_prob3',2)
   }
   render
 }
