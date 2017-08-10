@@ -1,14 +1,16 @@
 library(RPostgreSQL)
+library(RSQLite)
 
 get_db <- function() {
     #Modify the following line to point to a different data set, if you want. Or just replace the db file with an appropriate one.
-    db_data <- readRDS("db_prototype_2017_04_01.data")
+    db_data <- readRDS("db_prototype_2017_07_03.data")
     drv <- dbDriver("PostgreSQL")
     db <- dbConnect(drv, host=db_data$host,
-                        port=db_data$port,
-                        dbname=db_data$dbname,
-                        user=db_data$user,
-                        password=db_data$password)
+                         port=db_data$port,
+                         dbname=db_data$dbname,
+                         user=db_data$user,
+                         password=db_data$password)
+    #db <- dbConnect(RSQLite::SQLite(), "metaxcan_file_2.db")
     return(db)
 }
 
@@ -59,6 +61,7 @@ get_pheno_info_from_db <- function(db) {
         'pheno_info.file_date',
         ' FROM pheno INNER JOIN pheno_info ON pheno.id = pheno_info.pheno_id ',
         ' WHERE pheno.hidden = false',
+        #' WHERE pheno.hidden = 0', #for the sake of sqlite
         ' ORDER BY pheno.tag;'
     )
 
@@ -142,6 +145,7 @@ where_tissue_pattern_query <- function(pattern) {
 
 get_results_data_from_db <- function(input) {
     # Construct the fetching query
+    #where <- " WHERE m.pval IS NOT null and p.hidden != 1" #make it friendlier to sqlite
     where <- " WHERE m.pval IS NOT null and p.hidden != true"
 
     if (nchar(input$gene_name) > 0){
@@ -195,8 +199,8 @@ get_results_data_from_db <- function(input) {
     " m.pred_perf_R2,",
     " m.pred_perf_pval,",
     " m.pred_perf_qval,",
-    " m.n as n_snps_used,",
-    " m.model_n as n_snps_in_model, ",
+    " m.n_snps_used as n_snps_used,",
+    " m.n_snps_model as n_snps_in_model, ",
     " mi.p_smr, ",
     " mi.p_heidi, ",
     " mi.coloc_p4 as coloc_prob4, ",
