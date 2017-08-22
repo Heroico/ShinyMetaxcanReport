@@ -1,14 +1,16 @@
 library(RPostgreSQL)
+library(RSQLite)
 
 get_db <- function() {
     #Modify the following line to point to a different data set, if you want. Or just replace the db file with an appropriate one.
-    db_data <- readRDS("db_v6phm_1_3.data")
+    db_data <- readRDS("db_prototype_2017_08_10.data")
     drv <- dbDriver("PostgreSQL")
     db <- dbConnect(drv, host=db_data$host,
-                        port=db_data$port,
-                        dbname=db_data$dbname,
-                        user=db_data$user,
-                        password=db_data$password)
+                         port=db_data$port,
+                         dbname=db_data$dbname,
+                         user=db_data$user,
+                         password=db_data$password)
+    #db <- dbConnect(RSQLite::SQLite(), "metaxcan_file_2.db")
     return(db)
 }
 
@@ -59,6 +61,7 @@ get_pheno_info_from_db <- function(db) {
         'pheno_info.file_date',
         ' FROM pheno INNER JOIN pheno_info ON pheno.id = pheno_info.pheno_id ',
         ' WHERE pheno.hidden = false',
+        #' WHERE pheno.hidden = 0', #for the sake of sqlite
         ' ORDER BY pheno.tag;'
     )
 
@@ -142,6 +145,7 @@ where_tissue_pattern_query <- function(pattern) {
 
 get_results_data_from_db <- function(input) {
     # Construct the fetching query
+    #where <- " WHERE m.pval IS NOT null and p.hidden != 1" #make it friendlier to sqlite
     where <- " WHERE m.pval IS NOT null and p.hidden != true"
 
     if (nchar(input$gene_name) > 0){
@@ -176,23 +180,41 @@ get_results_data_from_db <- function(input) {
         where <- paste0(where, " AND pred_perf_R2 > ", r2_threshold)
     }
 
+    if(input$twas_f) {
+        where <- paste0(where, " AND tr.p > 0")
+    }
+
+    if(input$smr_f) {
+        where <- paste0(where, " AND mi.p_smr > 0")
+    }
+
     query <- paste0(
     "SELECT ",
     "g.gene_name,",
     " m.zscore,",
     " m.effect_size,",
     " m.pval,",
+    " mt.pvalue as mt_pval,",
     " p.tag as phenotype,",
     " t.tag as tissue,",
     " m.pred_perf_R2,",
     " m.pred_perf_pval,",
     " m.pred_perf_qval,",
-    " m.n as n_snps_used,",
-    " m.model_n as n_snps_in_model",
-    " FROM gene AS g ",
-    " INNER JOIN metaxcan_result AS m ON g.id = m.gene_id ",
+    " m.n_snps_used as n_snps_used,",
+    " m.n_snps_model as n_snps_in_model, ",
+    " mi.p_smr, ",
+    " mi.p_heidi, ",
+    " mi.coloc_p4 as coloc_prob4, ",
+    " mi.coloc_p3 as coloc_prob3, ",
+    " tr.p as p_twas ",
+    " FROM metaxcan_result AS m ",
+    " INNER JOIN gene AS g ON g.id = m.gene_id ",
     " INNER JOIN tissue AS t ON t.id = m.tissue_id ",
     " INNER JOIN pheno AS p ON p.id = m.pheno_id ",
+    " LEFT JOIN metaxcan_result_info as mi on m.id = mi.metaxcan_result_id ",
+    " LEFT JOIN twas_relationship as trr ON m.id = trr.metaxcan_result_id ",
+    " LEFT JOIN twas_result as tr ON trr.twas_result_id = tr.id ",
+    " LEFT JOIN multi_tissue_result as mt on mt.pheno_id = m.pheno_id and mt.gene_id = m.gene_id",
     where);
 
     if (input$ordered){
@@ -214,14 +236,15 @@ get_results_data_from_db <- function(input) {
 }
 
 post_process_results <- function(data) {
-    if(length(data$effect_size) > 0) {
-        data$effect_size <- round(data$effect_size,2)
-        data$zscore <- round(data$zscore,2)
-        data$pval <- signif(data$pval,2)
-        data$pred_perf_r2 <- round(data$pred_perf_r2,2)
-        data$pred_perf_pval <- signif(data$pred_perf_pval,2)
-        data$pred_perf_qval <- signif(data$pred_perf_qval,2)
-    }
+#   Not sure
+#    if(length(data$effect_size) > 0) {
+#        data$effect_size <- round(data$effect_size,2)
+#        data$zscore <- round(data$zscore,2)
+#        data$pval <- signif(data$pval,2)
+#        data$pred_perf_r2 <- round(data$pred_perf_r2,2)
+#        data$pred_perf_pval <- signif(data$pred_perf_pval,2)
+#        data$pred_perf_qval <- signif(data$pred_perf_qval,2)
+#    }
     data
 }
 

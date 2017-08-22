@@ -41,8 +41,9 @@ build_ui <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
-    titlePanel("Metaxcan Association results"),
-    p("Data Release: November 18, 2016."),
+    titlePanel("Metaxcan Association results, Multi Tissue Prototype"),
+    p("Data Release: August 10, 2017."),
+    p("Complemented with SMR and COLOC runs."),
     p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
     p("DGN Prediction Model built with Depression Genes and Networks study data."),
     htmlTemplate("modal.html",
@@ -63,13 +64,16 @@ build_ui <- function(){
         column(2, selectInput("tissue", "Tissue:", sgt)),
         column(1, numericInput("r2_threshold", "R2 threshold:",0.01)),
         column(1, numericInput("threshold", "Pvalue threshold:",0.05)),
-        column(1, numericInput("limit", "Record limit:", 100))
+        column(1, numericInput("limit", "Record limit:", 100)),
+        column(1, checkboxInput("smr_f", label = "Only with SMR"))
       ),
       fluidRow(
         column(2, p("(Admits lowercase gene names except for 'C*orf*' genes which need precise case)")),
         column(1),
         column(2, textInput("pheno_pattern", "Patterns:", "")),
-        column(2, textInput("tissue_pattern", "Patterns:", ""))
+        column(2, textInput("tissue_pattern", "Patterns:", "")),
+        column(3),
+        column(1, checkboxInput("twas_f", label = "Only with TWAS"))
       ),
       fluidRow(
         DT::dataTableOutput(outputId="results")

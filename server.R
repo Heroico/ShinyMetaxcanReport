@@ -1,3 +1,4 @@
+library(magrittr)
 source("helpers.R", local=TRUE)
 source("phenoInfoModule.R", local=TRUE)
 
@@ -13,19 +14,29 @@ selection_event <- function(selected, index) {
 
 render_results <- function(data) {
   render <- DT::datatable(data,
- # class = 'compact display',
+  class = 'compact display',
+
   options = list(
       pageLength = 20,
       lengthMenu = c(10, 20, 40, 100)
   ),
   selection = 'single')
 # multiple pipes didnt work across several line s:/
-  render <- render %>% DT::formatRound('zscore',2)
-  render <- render  %>% DT::formatRound('effect_size',2)
-  render <- render  %>% DT::formatSignif('pval',2)
-  render <- render  %>% DT::formatSignif('pred_perf_r2',2)
-  render <- render  %>% DT::formatSignif('pred_perf_pval',2)
-  render <- render  %>% DT::formatSignif('pred_perf_qval',2)
+
+  if (nrow(data)>0) {
+    render <- render %>%
+      DT::formatRound('zscore',2) %>%
+      DT::formatRound('effect_size',2) %>%
+      DT::formatSignif('pval',2) %>%
+      DT::formatSignif('mt_pval',2) %>%
+      DT::formatSignif('pred_perf_r2',2) %>%
+      DT::formatSignif('pred_perf_pval',2) %>%
+      DT::formatSignif('pred_perf_qval',2) %>%
+      DT::formatSignif('p_smr',2) %>%
+      DT::formatSignif('p_heidi',2) %>%
+      DT::formatSignif('coloc_prob4',2) %>%
+      DT::formatSignif('coloc_prob3',2)
+  }
   render
 }
 
@@ -51,7 +62,7 @@ shinyServer(function(input, output) {
 
   output$results <- DT::renderDataTable({
     data <- get_results_data_from_db(input)
-
+    data <- post_process_results(data)
     if ( length(data) ){
         results_index <<- data[,"phenotype"]
     }
