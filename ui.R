@@ -65,7 +65,8 @@ build_ui <- function(){
         column(1, numericInput("r2_threshold", "R2 threshold:",0.01)),
         column(1, numericInput("threshold", "Pvalue threshold:",0.05)),
         column(1, numericInput("limit", "Record limit:", 100)),
-        column(1, checkboxInput("smr_f", label = "Only with SMR"))
+        column(1, checkboxInput("smr_f", label = "Only with SMR")),
+        column(1, checkboxInput("hide", label = "Hide suspicious results", value = TRUE))
       ),
       fluidRow(
         column(2, p("(Admits lowercase gene names except for 'C*orf*' genes which need precise case)")),

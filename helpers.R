@@ -188,6 +188,10 @@ get_results_data_from_db <- function(input) {
         where <- paste0(where, " AND mi.p_smr > 0")
     }
 
+    if(input$hide) {
+       where <- paste0(where, " AND (m.hidden is null OR m.hidden =false)")
+    }
+
     query <- paste0(
     "SELECT ",
     "g.gene_name,",
