@@ -42,10 +42,8 @@ build_ui <- function(){
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
     titlePanel("Metaxcan Association results"),
-    p("Data Release: June 17, 2017."),
-    p("Complemented with SMR and COLOC runs."),
-    p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
-    p("DGN Prediction Model built with Depression Genes and Networks study data."),
+    p("ATHMA"),
+    p("Data Release: September 01, 2017."),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
