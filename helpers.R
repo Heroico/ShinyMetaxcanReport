@@ -239,6 +239,75 @@ get_results_data_from_db <- function(input) {
     data
 }
 
+get_pathway_results_data_from_db <- function(input) {
+    # Construct the fetching query
+    #where <- " WHERE m.pval IS NOT null and p.hidden != 1" #make it friendlier to sqlite
+    where <- " WHERE pwr.pvalue IS NOT null and p.hidden != 1"
+
+    if (nchar(input$pathway) > 0){
+      s <- naive_string_sanitation(input$pathway)
+      where <- paste0(where, " AND pw.tag LIKE '%", s, "%'")
+    }
+
+    if (nchar(input$pheno_pattern) >0) {
+      where <- paste0(where, where_pheno_pattern_query(input$pheno_pattern))
+    }
+
+    if (nchar(input$tissue_pattern) >0) {
+      where <- paste0(where, where_tissue_pattern_query(input$tissue_pattern))
+    }
+
+    if (input$pheno != "All") {
+      where <- paste0(where, " AND pwr.pheno_id = ", p[p$tag==input$pheno,]$id, "")
+    }
+
+    if (input$tissue != "All") {
+      where <- paste0(where, " AND pwr.tissue_id = ", t[t$tag==input$tissue,]$id, "")
+    }
+
+    if (is.numeric(input$threshold) && input$threshold > 0) {
+      t = input$threshold
+      where <- paste0(where, " AND pvalue < ", t)
+    }
+
+    if (is.numeric(input$r2_threshold) && input$r2_threshold > 0 && input$r2_threshold <= 1) {
+        r2_threshold = input$r2_threshold
+        where <- paste0(where, " AND r2 > ", r2_threshold)
+    }
+
+    query <- paste0(
+    "SELECT ",
+    " pw.tag as pathway,",
+    " p.tag as phenotype,",
+    " t.tag as tissue,",
+    " pwr.pvalue,",
+    " pwr.r2,",
+    " pwr.n_genes,",
+    " pwr.sample_size",
+    " FROM pathway_result AS pwr ",
+    " INNER JOIN pathway AS pw ON pw.id = pwr.pathway_id ",
+    " INNER JOIN tissue AS t ON t.id = pwr.tissue_id ",
+    " INNER JOIN pheno AS p ON p.id = pwr.pheno_id ",
+    where);
+
+    if (input$ordered){
+        query <- paste0(query, " ORDER BY pvalue");
+    }
+    l = 100
+    if (input$limit > 1) {
+      l = input$limit
+    }
+
+    query <- paste0(query, " LIMIT ", l);
+    query <- paste0(query, ";")
+
+    db <- get_db()
+    data <- dbGetQuery(db, query)
+    dbDisconnect(db)
+
+    data
+}
+
 post_process_results <- function(data) {
 #   Not sure
 #    if(length(data$effect_size) > 0) {

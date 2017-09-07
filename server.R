@@ -40,6 +40,25 @@ render_results <- function(data) {
   render
 }
 
+render_results_p <- function(data) {
+  render <- DT::datatable(data,
+  class = 'compact display',
+
+  options = list(
+      pageLength = 20,
+      lengthMenu = c(10, 20, 40, 100)
+  ),
+  selection = 'single')
+# multiple pipes didnt work across several line s:/
+
+  if (nrow(data)>0) {
+    render <- render %>%
+      DT::formatSignif('r2',3) %>%
+      DT::formatSignif('pvalue',3)
+  }
+  render
+}
+
 # Define a server for the Shiny app
 shinyServer(function(input, output) {
   # Filter data based on selections
@@ -60,13 +79,21 @@ shinyServer(function(input, output) {
     )
   })
 
-  output$results <- DT::renderDataTable({
-    data <- get_results_data_from_db(input)
-    data <- post_process_results(data)
+  # output$results <- DT::renderDataTable({
+  #   data <- get_results_data_from_db(input)
+  #   data <- post_process_results(data)
+  #   if ( length(data) ){
+  #       results_index <<- data[,"phenotype"]
+  #   }
+  #   render_results(data)
+  # })
+
+  output$pathway_results <- DT::renderDataTable({
+    data <- get_pathway_results_data_from_db(input)
     if ( length(data) ){
         results_index <<- data[,"phenotype"]
     }
-    render_results(data)
+    render_results_p(data)
   })
 
 # Used for debugging, mostly
@@ -76,9 +103,19 @@ shinyServer(function(input, output) {
 #    selection_event(input$results_rows_selected, results_index)
 #  })
 
+  # modal_process <- reactive({
+  #   v <- NULL
+  #   if (input$display == "results") {
+  #     v <- selection_event(input$results_rows_selected, results_index)
+  #   } else if(input$display == "pheno") {
+  #     v <- selection_event(input$pheno_rows_selected, pheno_index)
+  #   }
+  #   v
+  # })
+
   modal_process <- reactive({
     v <- NULL
-    if (input$display == "results") {
+    if (input$display == "pathway_results") {
       v <- selection_event(input$results_rows_selected, results_index)
     } else if(input$display == "pheno") {
       v <- selection_event(input$pheno_rows_selected, pheno_index)
