@@ -1,16 +1,16 @@
 library(RPostgreSQL)
-library(RSQLite)
+#library(RSQLite)
 
 get_db <- function() {
     #Modify the following line to point to a different data set, if you want. Or just replace the db file with an appropriate one.
-    # db_data <- readRDS("db_prototype_2017_08_10.data")
-    # drv <- dbDriver("PostgreSQL")
-    # db <- dbConnect(drv, host=db_data$host,
-    #                      port=db_data$port,
-    #                      dbname=db_data$dbname,
-    #                      user=db_data$user,
-    #                      password=db_data$password)
-    db <- dbConnect(RSQLite::SQLite(), "/home/numa/Documents/Projects/data/metaxcan/results/result_db/metaxcan_results_ukbiobank.db")
+    db_data <- readRDS("db_ukb_pathway_2017_09_06.data")
+    drv <- dbDriver("PostgreSQL")
+    db <- dbConnect(drv, host=db_data$host,
+                         port=db_data$port,
+                         dbname=db_data$dbname,
+                         user=db_data$user,
+                         password=db_data$password)
+    #db <- dbConnect(RSQLite::SQLite(), "/home/numa/Documents/Projects/data/metaxcan/results/result_db/metaxcan_results_ukbiobank.db")
     return(db)
 }
 
@@ -26,13 +26,13 @@ get_tissue_tag <- function(db) {
 }
 
 get_pheno_tag <- function(db) {
-    pheno_tag <- dbGetQuery(db, "SELECT DISTINCT tag FROM pheno WHERE pheno.hidden = 0 ORDER BY tag;")
+    pheno_tag <- dbGetQuery(db, "SELECT DISTINCT tag FROM pheno WHERE pheno.hidden = false ORDER BY tag;")
     sgp <- c("All", pheno_tag$tag)
     return(sgp)
 }
 
 get_phenos_from_db <- function(db) {
-    pheno <- dbGetQuery(db, "SELECT * FROM pheno WHERE pheno.hidden = 0 ORDER BY tag;")
+    pheno <- dbGetQuery(db, "SELECT * FROM pheno WHERE pheno.hidden = false ORDER BY tag;")
     return(pheno)
 }
 
@@ -60,7 +60,7 @@ get_pheno_info_from_db <- function(db) {
         'pheno_info.population,',
         'pheno_info.file_date',
         ' FROM pheno INNER JOIN pheno_info ON pheno.id = pheno_info.pheno_id ',
-        ' WHERE pheno.hidden = 0',
+        ' WHERE pheno.hidden = false',
         #' WHERE pheno.hidden = 0', #for the sake of sqlite
         ' ORDER BY pheno.tag;'
     )
@@ -146,7 +146,7 @@ where_tissue_pattern_query <- function(pattern) {
 get_results_data_from_db <- function(input) {
     # Construct the fetching query
     #where <- " WHERE m.pval IS NOT null and p.hidden != 1" #make it friendlier to sqlite
-    where <- " WHERE m.pval IS NOT null and p.hidden != 1"
+    where <- " WHERE m.pval IS NOT null and p.hidden != true"
 
     if (nchar(input$gene_name) > 0){
       s <- naive_string_sanitation(input$gene_name)
@@ -189,7 +189,7 @@ get_results_data_from_db <- function(input) {
     }
 
     if(input$hide) {
-       where <- paste0(where, " AND (m.hidden is null OR m.hidden =0)")
+       where <- paste0(where, " AND (m.hidden is null OR m.hidden = false)")
     }
 
     query <- paste0(
@@ -242,7 +242,7 @@ get_results_data_from_db <- function(input) {
 get_pathway_results_data_from_db <- function(input) {
     # Construct the fetching query
     #where <- " WHERE m.pval IS NOT null and p.hidden != 1" #make it friendlier to sqlite
-    where <- " WHERE pwr.pvalue IS NOT null and p.hidden != 1"
+    where <- " WHERE pwr.pvalue IS NOT null and p.hidden != true"
 
     if (nchar(input$pathway) > 0){
       s <- naive_string_sanitation(input$pathway)
