@@ -28,7 +28,7 @@ render_results <- function(data) {
       DT::formatRound('zscore',2) %>%
       DT::formatRound('effect_size',2) %>%
       DT::formatSignif('pval',2) %>%
-      DT::formatSignif('mt_pval',2) %>%
+      #DT::formatSignif('mt_pval',2) %>%
       DT::formatSignif('pred_perf_r2',2) %>%
       DT::formatSignif('pred_perf_pval',2) %>%
       DT::formatSignif('pred_perf_qval',2) %>%
