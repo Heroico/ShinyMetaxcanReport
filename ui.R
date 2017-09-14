@@ -43,7 +43,7 @@ build_ui <- function(){
     tags$head(includeScript("google-analytics.js")),
     p(strong("Recent increases in site traffic may cause slow performance."), style="color:red"),
     p(strong("We apologize for any inconvenience, and are working on a fix to be effected in the next few days."), style="color:red"),
-    titlePanel("Metaxcan Association results, Multi Tissue Prototype"),
+    titlePanel("Metaxcan Association results"),
     p("Data Release: August 10, 2017."),
     p("Complemented with SMR and COLOC runs."),
     p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
