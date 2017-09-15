@@ -65,11 +65,12 @@ build_ui_p <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
-    p(strong("Recent increases in site traffic may cause slow performance."), style="color:red"),
-    p(strong("We apologize for any inconvenience, and are working on a fix to be effected in the next few days."), style="color:red"),
+#    p(strong("Recent increases in site traffic may cause slow performance."), style="color:red"),
+#    p(strong("We apologize for any inconvenience, and are working on a fix to be effected in the next few days."), style="color:red"),
     titlePanel("Pathway PrediXcan association results, UKB Beta"),
     p("Data Release: September 06, 2017."),
     p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
+    p("p-values of zero arised when actual probabilities were too small to be represented by floating point numbers."),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")

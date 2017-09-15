@@ -3,7 +3,7 @@ library(RPostgreSQL)
 
 get_db <- function() {
     #Modify the following line to point to a different data set, if you want. Or just replace the db file with an appropriate one.
-    db_data <- readRDS("db_ukb_pathway_2017_09_06.data")
+    db_data <- readRDS("db_ukb_pathway_2017_09_14.data")
     drv <- dbDriver("PostgreSQL")
     db <- dbConnect(drv, host=db_data$host,
                          port=db_data$port,
