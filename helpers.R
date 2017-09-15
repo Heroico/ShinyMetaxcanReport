@@ -198,7 +198,7 @@ get_results_data_from_db <- function(input) {
     " m.zscore,",
     " m.effect_size,",
     " m.pval,",
-    #" mt.pvalue as mt_pval,",
+    " mt.pvalue as mt_pval,",
     " p.tag as phenotype,",
     " t.tag as tissue,",
     " m.pred_perf_R2,",
@@ -218,7 +218,7 @@ get_results_data_from_db <- function(input) {
     " LEFT JOIN metaxcan_result_info as mi on m.id = mi.metaxcan_result_id ",
     " LEFT JOIN twas_relationship as trr ON m.id = trr.metaxcan_result_id ",
     " LEFT JOIN twas_result as tr ON trr.twas_result_id = tr.id ",
-    #" LEFT JOIN multi_tissue_result as mt on mt.pheno_id = m.pheno_id and mt.gene_id = m.gene_id",
+    " LEFT JOIN multi_tissue_result as mt on mt.pheno_id = m.pheno_id and mt.gene_id = m.gene_id",
     where);
 
     if (input$ordered){

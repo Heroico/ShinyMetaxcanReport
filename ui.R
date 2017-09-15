@@ -48,6 +48,7 @@ build_ui <- function(){
     p("Complemented with SMR and COLOC runs."),
     p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
     p("DGN Prediction Model built with Depression Genes and Networks study data."),
+    p("p-values of zero arise from probabilities too small to be represented in floating point numbers."),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
