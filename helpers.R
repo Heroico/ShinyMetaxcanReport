@@ -10,7 +10,7 @@ get_db <- function() {
     #                      dbname=db_data$dbname,
     #                      user=db_data$user,
     #                      password=db_data$password)
-    db <- dbConnect(RSQLite::SQLite(), "/home/numa/Documents/Projects/data/metaxcan/results/result_db/metaxcan_results_v1.5.db")
+    db <- dbConnect(RSQLite::SQLite(), "/home/numa/Documents/Projects/data/metaxcan/results/result_db/metaxcan_results_athma_2.db")
     return(db)
 }
 
