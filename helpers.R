@@ -3,7 +3,7 @@ library(RSQLite)
 
 get_db <- function() {
     #Modify the following line to point to a different data set, if you want. Or just replace the db file with an appropriate one.
-    db_data <- readRDS("db_prototype_2017_08_10.data")
+    db_data <- readRDS("db_connection.data")
     drv <- dbDriver("PostgreSQL")
     db <- dbConnect(drv, host=db_data$host,
                          port=db_data$port,
@@ -17,6 +17,11 @@ get_db <- function() {
 get_tissues_from_db <- function(db) {
     tissue_tag <- dbGetQuery(db, "SELECT * FROM tissue ORDER BY tag;")
     return(tissue_tag)
+}
+
+get_genes_from_db <- function(db) {
+  gene_names <- dbGetQuery(db, "SELECT * FROM gene ORDER BY gene_name;")
+  return(gene_names)
 }
 
 get_tissue_tag <- function(db) {
@@ -145,29 +150,37 @@ where_tissue_pattern_query <- function(pattern) {
 
 get_results_data_from_db <- function(input) {
     # Construct the fetching query
-    #where <- " WHERE m.pval IS NOT null and p.hidden != 1" #make it friendlier to sqlite
+    #where <- " WHERE m.pval IS NOT null and p.hidden != 1" # make it friendlier to sqlite
     where <- " WHERE m.pval IS NOT null and p.hidden != true"
-
-    if (nchar(input$gene_name) > 0){
-      s <- naive_string_sanitation(input$gene_name)
-      s <- get_gene_name_field_conversion(s)
-      where <- paste0(where, " AND g.gene_name LIKE '", s, "%'")
+    
+    if (length(input$gene_name) != 0) {
+      where <- paste0(where, " AND ")
+      where <- paste0(where, "(g.gene_name = '", input$gene_name[1], "'")
+      if(length(input$gene_name) >= 2){
+        for(i in 2:length(input$gene_name))
+          where <- paste0(where, " OR g.gene_name = '", input$gene_name[i], "'")
+      }
+      where <- paste0(where,")")
     }
 
-    if (nchar(input$pheno_pattern) >0) {
-      where <- paste0(where, where_pheno_pattern_query(input$pheno_pattern))
+    if (length(input$pheno) != 0) {
+      where <- paste0(where, " AND ")
+      where <- paste0(where, "(m.pheno_id = '", p[p$tag==input$pheno[1],]$id, "'")
+      if(length(input$pheno) >= 2){
+        for(i in 2:length(input$pheno))
+          where <- paste0(where, " OR m.pheno_id = '", p[p$tag==input$pheno[i],], "'")
+      }
+      where <- paste0(where,")")
     }
-
-    if (nchar(input$tissue_pattern) >0) {
-      where <- paste0(where, where_tissue_pattern_query(input$tissue_pattern))
-    }
-
-    if (input$pheno != "All") {
-      where <- paste0(where, " AND m.pheno_id = ", p[p$tag==input$pheno,]$id, "")
-    }
-
-    if (input$tissue != "All") {
-      where <- paste0(where, " AND m.tissue_id = ", t[t$tag==input$tissue,]$id, "")
+    
+    if (length(input$tissue) != 0) {
+      where <- paste0(where, " AND ")
+      where <- paste0(where, "(m.tissue_id = '", t[t$tag==input$tissue[1],]$id, "'")
+      if(length(input$tissue) >= 2){
+        for(i in 2:length(input$tissue))
+          where <- paste0(where, " OR m.tissue_id = '", t[t$tag==input$tissue[i],]$id, "'")
+      }
+      where <- paste0(where,")")
     }
 
     if (is.numeric(input$threshold) && input$threshold > 0) {
