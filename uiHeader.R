@@ -1,12 +1,11 @@
 library(shiny)
 
-appTitle_ <- "MetaXcan Association results (257 phenotypes)"
-releaseDate_ <- "Data Release: September 26, 2017."
+appTitle_ <- "MetaXcan Association results (114 phenotypes)"
+releaseDate_ <- "Data Release: July 5, 2018."
 
 alertMessage_ <- ""  # Write an alert message here
 
-dataInfo_ <- "These results are based on GWAS summary statistics that are publicly available, as well as data from the GERA cohort."
-modelsInfo_ <- "GTEx Prediction models and covariances were built with GTEx V6P on HapMap SNPs.\nDGN Prediction model was built with the Depression, Genes and Networks study data."
+dataInfo_ <- "These results are based on GWAS summary statistics that are publicly available, as well as data from the UKB GWAs study by Neale Lab."
 
 appTitle <- function(){
   titlePanel(appTitle_) 
@@ -28,5 +27,8 @@ dataInfo <- function(){
 }
 
 modelsInfo <- function(){
-  p(modelsInfo_)
+  div(
+    p("GTEx Prediction models and covariances were built with GTEx V8 on HapMap SNPs."),
+    p("Models from Elastic Net; primary, secondary and tertiary eQTL; eQTLs filtered by DAP-G PIP")
+  )
 }
