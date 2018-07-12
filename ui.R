@@ -1,84 +1,70 @@
 source("helpers.R")
 source("uiHelpers.R")
+source("uiHeader.R")
 
 #reset Shiny Server when data gets updated
-sgt <- c("All", t$tag)
-sgp <- c("All", p$tag)
-
-# Not used at the moment, but might come back
-build_ui_d <- function(){
-  f <- fluidPage(
-    shinyjs::useShinyjs(),
-    titlePanel("Metaxcan Association results"),
-    p("Data Release: November 18, 2016"),
-    p("Tissues and covariances built on V6P HapMap"),
-    htmlTemplate("modal.html",
-      title = "Phenotype Information",
-      content = uiOutput("phenoInformation")
-    ),
-    p("'Tissue' stands for different transcriptome models used when generating the association."),
-    p("Tissues built with GTEX and DGN data, covariances with 1000 Genomes."),
-    fluidRow(
-      column(2, textInput("gene_name", "Gene Name:","")),
-      column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
-      column(2, selectInput("pheno", "Phenotype:", sgp)),
-      column(2, selectInput("tissue", "Tissue:", sgt)),
-      column(1, numericInput("r2_threshold", "R2 threshold:",0.0)),
-      column(1, numericInput("threshold", "Pvalue threshold:",0.05)),
-      column(1, numericInput("limit", "Record limit:", 100))
-    ),
-    fluidRow(
-      DT::dataTableOutput(outputId="results")
-    )#,
-    #fluidRow(
-    #  DT::dataTableOutput(outputId="pheno")
-    #)
-  )
-  f
-}
 
 build_ui <- function(){
   f <- fluidPage(
     shinyjs::useShinyjs(),
     tags$head(includeScript("google-analytics.js")),
-    titlePanel("Metaxcan Association results, Multi Tissue Prototype"),
-    p("Data Release: August 10, 2017."),
-    p("Complemented with SMR and COLOC runs."),
-    p("GTEx Prediction models and covariances built with GTEx V6P on HapMap SNPs."),
-    p("DGN Prediction Model built with Depression Genes and Networks study data."),
+    appTitle(), # uiHeader.R
+    releaseDate(),
+    alertMessage(),
+    dataInfo(),
+    modelsInfo(),
     htmlTemplate("modal.html",
       title = "Phenotype Information",
       content = uiOutput("phenoInformation")
     ),
     h3("Results:"),
-    selectInput(
-      "display", "What to show:",
-      c(Results = 'results',
-        Phenotypes = 'pheno')),
+    fluidRow(column(2, selectInput( "display", "What to show:",
+                 c(Results = 'results',
+                 Phenotypes = 'pheno')))),
     conditionalPanel(
       condition = "input.display == 'results'",
       fluidRow(
-        column(2, textInput("gene_name", "Gene Name:","")),
-        column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
-        column(2, selectInput("pheno", "Phenotype:", sgp)),
-        column(2, selectInput("tissue", "Tissue:", sgt)),
-        column(1, numericInput("r2_threshold", "R2 threshold:",0.00)),
-        column(1, numericInput("threshold", "Pvalue threshold:",0.05)),
-        column(1, numericInput("limit", "Record limit:", 100)),
-        column(1, checkboxInput("smr_f", label = "Only with SMR")),
-        column(1, checkboxInput("hide", label = "Hide suspicious results", value = TRUE))
+        column(2, selectizeInput(inputId = "gene_name",
+                                 label = "Filter by gene(s):",
+                                 choices = NULL,
+                                 selected = NULL,
+                                 multiple = TRUE,
+                                 # list of options for selectize.js available at: github.com/selectize/selectize.js/blob/master/docs/usage.md
+                                 options = list(closeAfterSelect = FALSE, openOnFocus = TRUE, loadThrottle = NULL))),
+        column(1),
+        column(3, selectizeInput(inputId = "tissue",
+                                label = "Filter by tissue(s):",
+                                choices = NULL,
+                                selected = NULL,
+                                multiple = TRUE,
+                                width = 500,
+                                # list of options for selectize.js available at: github.com/selectize/selectize.js/blob/master/docs/usage.md
+                                options = list(closeAfterSelect = FALSE, openOnFocus = TRUE, loadThrottle = NULL))),
+        column(1),
+        column(4, selectizeInput(inputId = "pheno",
+                                 label = "Filter by phenotype(s):",
+                                 choices = c('', p$tag),
+                                 selected = '',
+                                 multiple = TRUE,
+                                 width = 650,
+                                 # list of options for selectize.js available at: github.com/selectize/selectize.js/blob/master/docs/usage.md
+                                 options = list(closeAfterSelect = FALSE, openOnFocus = TRUE, loadThrottle = NULL)))
       ),
       fluidRow(
-        column(2, p("(Admits lowercase gene names except for 'C*orf*' genes which need precise case)")),
+        column(2, checkboxInput("ordered", label = "Order by p-value", value = TRUE)),
         column(1),
-        column(2, textInput("pheno_pattern", "Patterns:", "")),
-        column(2, textInput("tissue_pattern", "Patterns:", "")),
-        column(3),
+        column(1, numericInput("r2_threshold", "R2 threshold:", 0.00, min = 0, max = 1, step = 0.001)),
+        column(1, numericInput("threshold", "P-value thres.:", 0.05, width = 200), min = 0, max = 1, step = 0.001),
+        column(1, numericInput("limit", "Record limit:", 100), min = 1),
+        column(1),
+        column(1, checkboxInput("hide", label = "Hide suspicious results", value = TRUE)),
+        column(1, checkboxInput("smr_f", label = "Only with SMR")),
         column(1, checkboxInput("twas_f", label = "Only with TWAS"))
       ),
+      uiOutput("loading"),
       fluidRow(
         DT::dataTableOutput(outputId="results")
-      )#,
+      ) #,
     ),
     conditionalPanel(
       condition = "input.display == 'pheno'",

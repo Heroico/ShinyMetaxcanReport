@@ -21,7 +21,7 @@ render_results <- function(data) {
       lengthMenu = c(10, 20, 40, 100)
   ),
   selection = 'single')
-# multiple pipes didnt work across several line s:/
+  # multiple pipes didnt work across several line s:/
 
   if (nrow(data)>0) {
     render <- render %>%
@@ -32,22 +32,26 @@ render_results <- function(data) {
       DT::formatSignif('pred_perf_r2',2) %>%
       DT::formatSignif('pred_perf_pval',2) %>%
       DT::formatSignif('pred_perf_qval',2) %>%
-      DT::formatSignif('p_smr',2) %>%
-      DT::formatSignif('p_heidi',2) %>%
-      DT::formatSignif('coloc_prob4',2) %>%
-      DT::formatSignif('coloc_prob3',2)
+      DT::formatSignif('p_smr', 2) %>%
+      DT::formatSignif('p_heidi', 2) %>%
+      DT::formatSignif('coloc_prob4', 2) %>%
+      DT::formatSignif('coloc_prob3', 2)
   }
   render
 }
 
 # Define a server for the Shiny app
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
+ 
   # Filter data based on selections
   selected_pheno <- ""
   results_index <- data.frame()
   pheno_index <- data.frame()
   selected_index <- -1
-
+  
+  updateSelectizeInput(session = session, inputId = 'gene_name', choices = c(Choose = '', g$gene_name), server = TRUE)
+  updateSelectizeInput(session = session, inputId = 'tissue', choices = c(Choose = '', t$tag), server = TRUE)
+  
   output$pheno <- DT::renderDataTable({
     l <- p[,names(p) %in% c("tag", "name", "population", "consortium", "sample_size")]
     pheno_index <<- l[,"tag"]
@@ -69,12 +73,12 @@ shinyServer(function(input, output) {
     render_results(data)
   })
 
-# Used for debugging, mostly
-#  proxy <- DT::dataTableProxy('results')
+  # Used for debugging, mostly
+  #  proxy <- DT::dataTableProxy('results')
 
-#  modal_process <- eventReactive(input$results_rows_selected, {
-#    selection_event(input$results_rows_selected, results_index)
-#  })
+  #  modal_process <- eventReactive(input$results_rows_selected, {
+  #    selection_event(input$results_rows_selected, results_index)
+  #  })
 
   modal_process <- reactive({
     v <- NULL
@@ -98,5 +102,30 @@ shinyServer(function(input, output) {
     shinyjs::runjs("$('#myModal').modal()")
   })
 
+  output$loading <- renderUI({fluidPage(
+    tags$head(tags$style(type="text/css", "
+             #loadmessage {
+               position: relative;
+               top: 300px;
+               box-shadow: 6px 6px 18px #808080;
+               border: 2px;
+               border-radius: 5px;
+               left: 0px;
+               width: 100%;
+               padding: 25px 0px 25px 0px;
+               text-align: center;
+               font-weight: bold;
+               font-size: 100%;
+               color: #000000;
+               background-color: #CCFF66;
+               z-index: 105;
+               opacity: 0.7;
+             }
+        ")),
+    conditionalPanel(
+      condition="($('html').hasClass('shiny-busy'))",
+      tags$div("Loading...", id="loadmessage")
+    ))
+  })
+  
 })
-
