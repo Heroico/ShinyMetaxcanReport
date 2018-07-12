@@ -23,7 +23,7 @@ build_ui_d <- function(){
       column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
       column(2, selectInput("pheno", "Phenotype:", sgp)),
       column(2, selectInput("tissue", "Tissue:", sgt)),
-      column(1, numericInput("r2_threshold", "R2 threshold:",0.01)),
+      column(1, numericInput("r2_threshold", "R2 threshold:",0.0)),
       column(1, numericInput("threshold", "Pvalue threshold:",0.05)),
       column(1, numericInput("limit", "Record limit:", 100))
     ),
@@ -62,7 +62,7 @@ build_ui <- function(){
         column(1, checkboxInput("ordered", label = "Ordered", value = TRUE)),
         column(2, selectInput("pheno", "Phenotype:", sgp)),
         column(2, selectInput("tissue", "Tissue:", sgt)),
-        column(1, numericInput("r2_threshold", "R2 threshold:",0.01)),
+        column(1, numericInput("r2_threshold", "R2 threshold:",0.00)),
         column(1, numericInput("threshold", "Pvalue threshold:",0.05)),
         column(1, numericInput("limit", "Record limit:", 100)),
         column(1, checkboxInput("smr_f", label = "Only with SMR")),
